@@ -72,3 +72,56 @@ dataset_education %>%
     labs(title = "Top Bigrams of Education Interventions",
          subtitle = "Compiled by Doris Suzuki Esmerio and Kelsey Daniels",
          caption = "Data Source: Accord Network Members's websites")
+
+### Method 3: Topic Extraction ----
+# Based on "https://www.r-bloggers.com/2019/08/how-to-do-topic-extraction-from-customer-reviews-in-r/"
+library("udpipe")
+# en <- udpipe::udpipe_download_model("english")
+model <- udpipe_load_model("english-ewt-ud-2.5-191206.udpipe")
+doc <- udpipe::udpipe_annotate(model, dataset_education$`Ed Interventions`)
+names(as.data.frame(doc))
+
+
+## Rake ---
+doc_df <- as.data.frame(doc)
+topics <- keywords_rake(x = doc_df, term = "lemma", group = "doc_id", 
+                        relevant = doc_df$upos %in% c("NOUN", "ADJ"))
+head(topics)
+
+## Vis
+
+library(tidyverse)
+topics %>% 
+    head() %>% 
+    ggplot() + geom_bar(aes(x = keyword,
+                            y = rake), stat = "identity",
+                        fill = "#ff2211") +
+    coord_flip() +
+    theme_minimal() +
+    labs(title = "Top Topics of Education Interventions",
+         subtitle = "Accord Network Members",
+         caption = "Compilation by Doris Suzuki Esmerio and Kelsey Daniels")
+
+topics %>% 
+    head() %>% 
+    arrange(desc(rake)) %>% 
+    ggplot() + geom_bar(aes(keyword,rake), stat = "identity",
+                        fill = "#ff2211") +
+    coord_flip() +
+    theme_minimal() +
+    labs(title = "Top Topics of Education Interventions",
+         subtitle = "Accord Network Members",
+         caption = "Compilation by Doris Suzuki Esmerio and Kelsey Daniels")
+
+
+topics %>% 
+    head() %>% 
+    arrange(desc(rake)) %>% 
+    ggplot(aes(x = reorder(keyword, rake), y = rake)) +
+    geom_col(fill = "darkorange1") +
+    coord_flip() +
+    theme_minimal() +
+    labs(title = "Top Topics of Education Interventions",
+         subtitle = "Accord Network Members",
+         caption = "Compilation by Doris Suzuki Esmerio and Kelsey Daniels") +
+    theme(axis.title.y = element_blank())
