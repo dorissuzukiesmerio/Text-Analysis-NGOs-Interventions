@@ -15,13 +15,15 @@ library(googlesheets4)
 
 # running read_sheet() will ask you to authenticate with Google first
 dataset <- read_sheet("https://docs.google.com/spreadsheets/d/1RqNe4ETrhK_t9cSQbXqCdcdd82ZLtc0ZFm4Wz0wqPvQ/edit#gid=1390658809")
-
+?read_sheet
 names(dataset)
 
 dataset_education <- dataset %>% 
     filter(`Ed or No Ed`== "Yes"|`Ed or No Ed`=="Yes?") %>% 
     select(`NGO Name and General Website`,`Ed Interventions`)
 
+
+dataset_education %>% View()
 # Method 1: Unigrams ----
 # Remove stopwords from comments: 
 comments_df <- dataset_education %>%
@@ -70,7 +72,7 @@ dataset_education %>%
     theme_minimal() +
     coord_flip() +
     labs(title = "Top Bigrams of Education Interventions",
-         subtitle = "Compiled by Doris Suzuki Esmerio and Kelsey Daniels",
+         subtitle = "Compiled by Doris Suzuki Esmerio, Kelsey Daniels and Paul Glewee",
          caption = "Data Source: Accord Network Members's websites")
 
 ### Method 3: Topic Extraction ----
@@ -99,8 +101,9 @@ topics %>%
     coord_flip() +
     theme_minimal() +
     labs(title = "Top Topics of Education Interventions",
-         subtitle = "Accord Network Members",
-         caption = "Compilation by Doris Suzuki Esmerio and Kelsey Daniels")
+         subtitle = "Accord Network Members" #,
+         # caption = "Compilation by Doris Suzuki Esmerio and Kelsey Daniels and "
+         )
 
 topics %>% 
     head() %>% 
@@ -122,6 +125,7 @@ topics %>%
     coord_flip() +
     theme_minimal() +
     labs(title = "Top Topics of Education Interventions",
-         subtitle = "Accord Network Members",
-         caption = "Compilation by Doris Suzuki Esmerio and Kelsey Daniels") +
+         subtitle = "Accord Network Members" #,
+         # caption = "Compilation by Doris Suzuki Esmerio and Kelsey Daniels"
+         ) +
     theme(axis.title.y = element_blank())
